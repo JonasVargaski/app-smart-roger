@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-import { Keyboard } from 'react-native';
+import React, { useRef, useState, useEffect } from 'react';
+import { Keyboard, AsyncStorage } from 'react-native';
 import api from '../../services/api';
 
 import Background from '../../components/Background';
@@ -15,11 +15,27 @@ import {
 export default function SignIn({ navigation }) {
   const passwordRef = useRef();
 
-  const [email, setEmail] = useState('');
+  const [adress, setAdress] = useState('');
   const [password, setPassword] = useState('');
 
+  useEffect(() => {
+    async function loadStorage() {
+      const data = await AsyncStorage.getItem('login');
+
+      if (data) {
+        const { adress } = JSON.parse(data);
+        setAdress(adress);
+      }
+
+    }
+    loadStorage();
+  }, [])
+
   async function handleSubmit() {
+    const data = { adress, password };
+    await AsyncStorage.setItem('login', JSON.stringify(data))
     // const { data } = await api.get('')
+    navigation.navigate('Dashboard')
     Keyboard.dismiss();
   }
 
@@ -37,8 +53,8 @@ export default function SignIn({ navigation }) {
             placeholder="Endereço Servidor"
             returnKeyType="next"
             onSubmitEditing={() => passwordRef.current.focus()}
-            value={email}
-            onChangeText={setEmail}
+            value={adress}
+            onChangeText={setAdress}
           />
 
           <Input

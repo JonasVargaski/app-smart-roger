@@ -1,11 +1,10 @@
 import React from 'react';
-import { View, Text } from 'react-native';
-import SignIn from './pages/SignIn'
+import Routes from './routes'
 
 export default function src() {
   return (
     <>
-      <SignIn />
+      <Routes />
     </>
   );
 }
