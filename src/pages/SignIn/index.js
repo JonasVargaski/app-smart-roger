@@ -53,7 +53,7 @@ export default function SignIn({ navigation }) {
   return (
     <Background>
       <Container>
-        <Title>Login do Usuário</Title>
+        <Title>Autenticação</Title>
         <Form>
           <Input
             icon="public"
