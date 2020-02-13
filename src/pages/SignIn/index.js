@@ -1,15 +1,13 @@
 import React, { useRef, useState } from 'react';
 import { Keyboard } from 'react-native';
 
-import Background from '~/components/Background';
+import Background from '../../components/Background';
 import {
   Container,
   Form,
   Input,
   SubmitButton,
   TextButton,
-  SignLink,
-  SignLinkText,
 } from './styles';
 
 export default function SignIn({ navigation }) {
@@ -56,14 +54,6 @@ export default function SignIn({ navigation }) {
             <TextButton>Acessar</TextButton>
           </SubmitButton>
         </Form>
-
-        <SignLink
-          onPress={() => {
-            navigation.navigate('SignUp');
-          }}
-        >
-          <SignLinkText>Criar Conta</SignLinkText>
-        </SignLink>
       </Container>
     </Background>
   );

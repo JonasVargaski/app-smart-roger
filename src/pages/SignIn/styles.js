@@ -1,8 +1,8 @@
 import styled from 'styled-components/native';
 import { Platform } from 'react-native';
 
-import TInput from '~/components/Input';
-import Button from '~/components/Button';
+import TInput from '../../components/Input';
+import Button from '../../components/Button';
 
 export const Container = styled.KeyboardAvoidingView.attrs({
   behavior: Platform.select({
@@ -14,10 +14,6 @@ export const Container = styled.KeyboardAvoidingView.attrs({
   justify-content: center;
   align-items: center;
   padding: 0 25px;
-`;
-
-export const ImageLogo = styled.Image`
-  width: 90px;
 `;
 
 export const Form = styled.View`
@@ -38,14 +34,4 @@ export const TextButton = styled.Text`
   font-size: 18px;
   font-weight: bold;
   margin-left: 8px;
-`;
-
-export const SignLink = styled.TouchableOpacity`
-  margin-top: 17px;
-`;
-
-export const SignLinkText = styled.Text`
-  color: #666;
-  font-weight: bold;
-  font-size: 16px;
 `;
