@@ -39,11 +39,11 @@ export default function SignIn({ navigation }) {
     try {
       setLoading(true)
 
-      const { data } = await api.get(`${adress}/?auth=${password}`);
+      // const { data } = await api.get(`${adress}/?auth=${password}`);
       navigation.navigate('Dashboard');
 
     } catch (e) {
-      Alert.alert('Erro ao efetuar login', 'Dados Incorretos.');
+      Alert.alert('Erro ao efetuar login', 'Erro ao estabelecer conexão com o servidor.');
     }
     finally {
       setLoading(false);
