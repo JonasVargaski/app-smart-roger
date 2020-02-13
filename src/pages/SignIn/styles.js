@@ -16,6 +16,13 @@ export const Container = styled.KeyboardAvoidingView.attrs({
   padding: 0 25px;
 `;
 
+export const Title = styled.Text`
+  font-size:25px;
+  font-weight:bold;
+  color:#666;
+  text-align:center;
+`;
+
 export const Form = styled.View`
   align-self: stretch;
   margin-top: 50px;

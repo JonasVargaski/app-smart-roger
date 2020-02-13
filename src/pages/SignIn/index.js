@@ -1,9 +1,11 @@
 import React, { useRef, useState } from 'react';
 import { Keyboard } from 'react-native';
+import api from '../../services/api';
 
 import Background from '../../components/Background';
 import {
   Container,
+  Title,
   Form,
   Input,
   SubmitButton,
@@ -16,7 +18,8 @@ export default function SignIn({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  function handleSubmit() {
+  async function handleSubmit() {
+    // const { data } = await api.get('')
     Keyboard.dismiss();
   }
 
@@ -24,13 +27,14 @@ export default function SignIn({ navigation }) {
   return (
     <Background>
       <Container>
+        <Title>Automação Roger</Title>
         <Form>
           <Input
-            icon="mail-outline"
+            icon="public"
             autoCorrect={false}
             autoCapitalize="none"
-            keyboardType="email-address"
-            placeholder="Digite seu E-mail"
+            keyboardType="default"
+            placeholder="Endereço Servidor"
             returnKeyType="next"
             onSubmitEditing={() => passwordRef.current.focus()}
             value={email}
@@ -42,7 +46,7 @@ export default function SignIn({ navigation }) {
             autoCorrect={false}
             secureTextEntry
             autoCapitalize="none"
-            placeholder="Sua senha secreta"
+            placeholder="Senha de Acesso"
             ref={passwordRef}
             returnKeyType="send"
             onSubmitEditing={handleSubmit}
