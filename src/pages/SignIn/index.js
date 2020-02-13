@@ -26,7 +26,6 @@ export default function SignIn({ navigation }) {
         const { adress } = JSON.parse(data);
         setAdress(adress);
       }
-
     }
     loadStorage();
   }, [])
@@ -35,15 +34,15 @@ export default function SignIn({ navigation }) {
     const data = { adress, password };
     await AsyncStorage.setItem('login', JSON.stringify(data))
     // const { data } = await api.get('')
-    navigation.navigate('Dashboard')
     Keyboard.dismiss();
+    navigation.navigate('Dashboard')
   }
 
 
   return (
     <Background>
       <Container>
-        <Title>Automação Roger</Title>
+        <Title>Login do Usuário</Title>
         <Form>
           <Input
             icon="public"
