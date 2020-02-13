@@ -22,5 +22,6 @@ module.exports = {
         "react"
     ],
     "rules": {
-    }
+        "react/prop-types": ["error", { "ignore": ["navigation", "tintColor"] }],
+    },
 };

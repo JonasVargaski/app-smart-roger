@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Keyboard, AsyncStorage } from 'react-native';
-import api from '../../services/api';
+import { Keyboard, AsyncStorage, Alert } from 'react-native';
+import api from 'axios';
 
 import Background from '../../components/Background';
 import {
@@ -15,6 +15,7 @@ import {
 export default function SignIn({ navigation }) {
   const passwordRef = useRef();
 
+  const [loading, setLoading] = useState(false);
   const [adress, setAdress] = useState('');
   const [password, setPassword] = useState('');
 
@@ -31,13 +32,23 @@ export default function SignIn({ navigation }) {
   }, [])
 
   async function handleSubmit() {
+    Keyboard.dismiss();
     const data = { adress, password };
     await AsyncStorage.setItem('login', JSON.stringify(data))
-    // const { data } = await api.get('')
-    Keyboard.dismiss();
-    navigation.navigate('Dashboard')
-  }
 
+    try {
+      setLoading(true)
+
+      const { data } = await api.get(`${adress}/?auth=${password}`);
+      navigation.navigate('Dashboard');
+
+    } catch (e) {
+      Alert.alert('Erro ao efetuar login', 'Dados Incorretos.');
+    }
+    finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <Background>
@@ -69,7 +80,7 @@ export default function SignIn({ navigation }) {
             onChangeText={setPassword}
           />
 
-          <SubmitButton onPress={handleSubmit}>
+          <SubmitButton loading={loading} onPress={handleSubmit}>
             <TextButton>Acessar</TextButton>
           </SubmitButton>
         </Form>
