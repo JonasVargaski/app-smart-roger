@@ -42,8 +42,8 @@ export default function SignIn({ navigation }) {
       // const { data } = await api.get(`${adress}/?auth=${password}`);
       navigation.navigate('Dashboard');
 
-    } catch (e) {
-      Alert.alert('Erro ao efetuar login', 'Erro ao estabelecer conexão com o servidor.');
+    } catch ({message}) {
+      Alert.alert('Erro ao estabelecer conexão com o servidor!', message);
     }
     finally {
       setLoading(false);
@@ -60,7 +60,7 @@ export default function SignIn({ navigation }) {
             autoCorrect={false}
             autoCapitalize="none"
             keyboardType="default"
-            placeholder="Endereço Servidor"
+            placeholder="Endereço do Servidor"
             returnKeyType="next"
             onSubmitEditing={() => passwordRef.current.focus()}
             value={adress}

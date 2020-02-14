@@ -1,86 +1,98 @@
-import React, { useState } from 'react';
-import {AsyncStorage} from 'react-native';
+import React from 'react';
+import { AsyncStorage, ToastAndroid, Vibration, Alert } from 'react-native';
 import axios from 'axios';
 
-
 import Background from '../../components/Background';
-import { Container, Action, Switch, Button } from './styles';
+import { Container, Action, Text, Button } from './styles';
 
 export default function DashBoard() {
-  const [relays, setRelays] = useState([
+  const relays = [
     {
-      id: 'rl1',
+      id: 1,
       name: 'Rele 1',
-      value:false,
-      type:'retention'
+      type: 'R'
     },
     {
-      id: 'rl2',
+      id: 2,
       name: 'Rele 2',
-      value:false,
-      type:'retention'
+      type: 'R'
     },
     {
-      id: 'rl3',
+      id: 3,
       name: 'Rele 3',
-      value:false,
-      type:'retention'
+      type: 'R'
     },
     {
-      id: 'rl4',
+      id: 4,
       name: 'Rele 4',
-      value:false,
-      type:'retention'
+      type: 'R'
     },
     {
-      id: 'rl5',
+      id: 5,
       name: 'Rele 5',
-      value:false,
-      type:'retention'
+      type: 'R'
     },
     {
-      id: 'rl6',
+      id: 6,
       name: 'Rele 6',
-      value:false,
-      type:'retention'
+      type: 'R'
     },
     {
-      id: 'rl7',
+      id: 7,
       name: 'Rele 7',
-      value: false,
-      type:'retention'
+      type: 'R'
     },
     {
-      id: 'rl8',
+      id: 8,
       name: 'Rele 8',
-      value: false,
-      type:'pulse'
+      type: 'P'
     },
-  ])
-  
-    function handleSwitch({ name }){
-      setRelays([...relays.map(rl => ({...rl, value: rl.name === name ? !rl.value : rl.value }))]);
-    }
+  ]
 
-    async function sendToServer(){
-      const data = relays.map(r=> {return `${r.id}-${r.value ? 'ON' : 'OFF'}-${r.type === 'pulse' ? 'P': 'R'}`}).join('#')
+  async function sendToServer(relay, action) {
+    Vibration.vibrate(90);
+
+    try {
       const { adress } = JSON.parse(await AsyncStorage.getItem('login'));
-      // const response = await axios.get(`${adress}?${data}`);
-      console.log( data);
+      console.log(`${adress}?rl-${relay.id}-${relay.type}-${action}`);
+
+      await axios.get(`${adress}?rl-${relay.id}-${relay.type}-${action}`);
+
+      ToastAndroid.showWithGravityAndOffset(
+        'Sinal Enviado!',
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        25,
+        120,
+      );
+
+      setTimeout(() => {
+        Vibration.vibrate([100, 100, 100, 100]);
+      }, 200);
+
+    } catch ({ message }) {
+      Alert.alert(
+        'Erro ao enviar soliticação!',
+        message,
+      );
+      Vibration.vibrate(650);
     }
+  }
 
   return (
     <Background>
       <Container >
         {relays.map(relay => (
-         <Action key={relay.id}>
-            <Switch isOn={relay.value} label={relay.name} onToggle={()=> handleSwitch(relay)}/>
-         </Action>
+          <Action key={relay.id}>
+            <Text>{relay.name}</Text>
+            <Button onPress={() => sendToServer(relay, 'ON')}>
+              Ligar
+           </Button>
+            <Button style={{ backgroundColor: '#888' }} onPress={() => sendToServer(relay, 'OFF')}>
+              Desligar
+           </Button>
+          </Action>
         ))}
-
-        <Button onPress={sendToServer}>
-          Enviar
-        </Button>
       </Container>
     </Background >
   );
