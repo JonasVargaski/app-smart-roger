@@ -15,7 +15,7 @@ export const Text = styled.Text`
 `;
 
 export const Action = styled.View`
-  margin-top:21px;
+  margin-top:16px;
   flex-direction:row;
   align-items:center;
 `

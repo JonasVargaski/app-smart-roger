@@ -88,7 +88,7 @@ export default function DashBoard() {
             <Button onPress={() => sendToServer(relay, 'ON')}>
               Ligar
            </Button>
-            <Button style={{ backgroundColor: '#888' }} onPress={() => sendToServer(relay, 'OFF')}>
+            <Button style={{ backgroundColor: '#333' }} onPress={() => sendToServer(relay, 'OFF')}>
               Desligar
            </Button>
           </Action>
