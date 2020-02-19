@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Keyboard, AsyncStorage, Alert } from 'react-native';
-import api from 'axios';
+import axios from 'axios';
 
 import Background from '../../components/Background';
 import {
@@ -24,8 +24,9 @@ export default function SignIn({ navigation }) {
       const data = await AsyncStorage.getItem('login');
 
       if (data) {
-        const { adress } = JSON.parse(data);
+        const { adress, password } = JSON.parse(data);
         setAdress(adress);
+        setPassword(password);
       }
     }
     loadStorage();
@@ -39,10 +40,10 @@ export default function SignIn({ navigation }) {
     try {
       setLoading(true)
 
-      // const { data } = await api.get(`${adress}/?auth=${password}`);
+      await axios.post(adress, { password });
       navigation.navigate('Dashboard');
 
-    } catch ({message}) {
+    } catch ({ message }) {
       Alert.alert('Erro ao estabelecer conexão com o servidor!', message);
     }
     finally {

@@ -8,55 +8,54 @@ import { Container, Action, Text, Button } from './styles';
 export default function DashBoard() {
   const relays = [
     {
-      id: 1,
+      pin: 2,
       name: 'Rele 1',
       type: 'R'
     },
     {
-      id: 2,
+      pin: 3,
       name: 'Rele 2',
       type: 'R'
     },
     {
-      id: 3,
+      pin: 4,
       name: 'Rele 3',
       type: 'R'
     },
     {
-      id: 4,
+      pin: 5,
       name: 'Rele 4',
       type: 'R'
     },
     {
-      id: 5,
+      pin: 6,
       name: 'Rele 5',
       type: 'R'
     },
     {
-      id: 6,
+      pin: 7,
       name: 'Rele 6',
       type: 'R'
     },
     {
-      id: 7,
+      pin: 8,
       name: 'Rele 7',
       type: 'R'
     },
     {
-      id: 8,
+      pin: 9,
       name: 'Rele 8',
       type: 'P'
     },
   ]
 
-  async function sendToServer(relay, action) {
+  async function sendToServer({ pin, type }, action) {
     Vibration.vibrate(90);
 
     try {
-      const { adress } = JSON.parse(await AsyncStorage.getItem('login'));
-      console.log(`${adress}?rl-${relay.id}-${relay.type}-${action}`);
+      const { adress, password } = JSON.parse(await AsyncStorage.getItem('login'));
 
-      await axios.get(`${adress}?rl-${relay.id}-${relay.type}-${action}`);
+      await axios.post(adress, { password, pin, action, type });
 
       ToastAndroid.showWithGravityAndOffset(
         'Sinal Enviado!',
@@ -83,12 +82,12 @@ export default function DashBoard() {
     <Background>
       <Container >
         {relays.map(relay => (
-          <Action key={relay.id}>
+          <Action key={relay.pin}>
             <Text>{relay.name}</Text>
-            <Button onPress={() => sendToServer(relay, 'ON')}>
+            <Button onPress={() => sendToServer(relay, 1)}>
               Ligar
            </Button>
-            <Button style={{ backgroundColor: '#333' }} onPress={() => sendToServer(relay, 'OFF')}>
+            <Button style={{ backgroundColor: '#333' }} onPress={() => sendToServer(relay, 0)}>
               Desligar
            </Button>
           </Action>
