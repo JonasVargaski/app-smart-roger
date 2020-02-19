@@ -5,9 +5,7 @@
     "privacy": "public",
     "sdkVersion": "36.0.0",
     "platforms": [
-      "ios",
-      "android",
-      "web"
+      "android"
     ],
     "version": "1.0.0",
     "orientation": "portrait",
@@ -25,6 +23,10 @@
     ],
     "ios": {
       "supportsTablet": true
+    },
+    "android": {
+      "package": "com.technow.rogerApp",
+      "versionCode": 1
     }
   }
 }
