@@ -40,7 +40,7 @@ export default function SignIn({ navigation }) {
     try {
       setLoading(true)
 
-      await axios.post(adress, { password });
+      // await axios.post(adress, { password });
       navigation.navigate('Dashboard');
 
     } catch ({ message }) {

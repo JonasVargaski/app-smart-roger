@@ -23,5 +23,6 @@ module.exports = {
     ],
     "rules": {
         "react/prop-types": ["error", { "ignore": ["navigation", "tintColor"] }],
+        "react/display-name":"off"
     },
 };

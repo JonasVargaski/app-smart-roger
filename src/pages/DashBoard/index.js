@@ -1,11 +1,20 @@
 import React from 'react';
 import { AsyncStorage, ToastAndroid, Vibration, Alert } from 'react-native';
 import axios from 'axios';
+import Icon from '@expo/vector-icons/MaterialIcons'
 
 import Background from '../../components/Background';
-import { Container, Action, Text, Button } from './styles';
+import { Container, Action, Text, Button, SettingsButton } from './styles';
 
-export default function DashBoard() {
+export default function Dashboard({ navigation }) {
+  navigation.setOptions({
+    headerRight: () => (
+      <SettingsButton onPress={() => navigation.navigate('Settings')}>
+       <Icon name="settings" size={25} color="#FFF" />
+      </SettingsButton>
+    ),
+  });
+
   const relays = [
     {
       pin: 2,

@@ -21,9 +21,14 @@ export const Action = styled.View`
 `
 export const Button = styled(StyledButton)`
   padding: 0 20px;
-  font-size:25px;
-  font-weight:bold;
-  margin-left:10px;
+  font-size: 25px;
+  font-weight: bold;
+  margin-left: 10px;
+  height: 38px;
+`;
+
+export const SettingsButton = styled.TouchableOpacity`
+  margin-right:15px;
 `;
 
 
