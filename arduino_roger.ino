@@ -3,7 +3,6 @@
 #include <SPI.h>
 
 const String SENHA_ACESSO = "1a2b3c4e";
-const int DURACAO_PULSO = 700;
 
 byte mac[] = {0xA4, 0x28, 0x72, 0xCA, 0x55, 0x2F};
 byte ip[] = {192, 168, 0, 110};
@@ -65,11 +64,11 @@ void loop()
 
           long pin = data["pin"];
           long acao = data["action"];
-          const char *tipo = data["type"];
+          long duracao = data["time"];
 
           if (pin)
           {
-            processarSaida(pin, acao, String(tipo));
+            processarSaida(pin, acao, duracao);
           }
           enviarStatusArduino(client);
         }
@@ -138,20 +137,20 @@ void enviarErroAcesso(EthernetClient client)
   client.stop();
 }
 
-void processarSaida(int pin, int acao, String tipo)
+void processarSaida(int pin, int acao, int duracao)
 {
   pinMode(pin, OUTPUT);
-  if (tipo == "R")
+  if (duracao <= 1)
   {
     digitalWrite(pin, acao);
-    delay(10);
   }
-  else if (tipo == "P" && acao == 1)
+  else if (duracao > 1 && acao == 1)
   {
     digitalWrite(pin, HIGH);
-    delay(DURACAO_PULSO);
+    delay(duracao);
     digitalWrite(pin, LOW);
   }
+  delay(20);
 }
 
 void iniciarDesligado()

@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Keyboard, AsyncStorage, Alert } from 'react-native';
+import { Keyboard, Alert } from 'react-native';
 import axios from 'axios';
 
 import Background from '../../components/Background';
@@ -12,36 +12,33 @@ import {
   TextButton,
 } from './styles';
 
+import useAppContext from '../../store';
+
 export default function SignIn({ navigation }) {
+  const { store, dispatch } = useAppContext();
+
   const passwordRef = useRef();
 
   const [loading, setLoading] = useState(false);
-  const [adress, setAdress] = useState('');
+  const [address, setAddress] = useState('');
   const [password, setPassword] = useState('');
 
   useEffect(() => {
-    async function loadStorage() {
-      const data = await AsyncStorage.getItem('login');
-
-      if (data) {
-        const { adress, password } = JSON.parse(data);
-        setAdress(adress);
-        setPassword(password);
-      }
-    }
-    loadStorage();
-  }, [])
+    setAddress(store.address);
+    setPassword(store.password);
+  }, [store.address])
 
   async function handleSubmit() {
     Keyboard.dismiss();
-    const data = { adress, password };
-    await AsyncStorage.setItem('login', JSON.stringify(data))
-
+    dispatch({ type: 'SET_SERVER_INFO', payload: { address, password } })
     try {
-      setLoading(true)
+      setLoading(true);
 
-      // await axios.post(adress, { password });
-      navigation.navigate('Dashboard');
+      const { data } = await axios.post(address, { password });
+      if (data.pins) {
+        dispatch({ type: 'CHANGE_STATUS_RELAYS', payload: data.pins });
+        navigation.navigate('Dashboard');
+      }
 
     } catch ({ message }) {
       Alert.alert('Erro ao estabelecer conexão com o servidor!', message);
@@ -64,8 +61,8 @@ export default function SignIn({ navigation }) {
             placeholder="Endereço do Servidor"
             returnKeyType="next"
             onSubmitEditing={() => passwordRef.current.focus()}
-            value={adress}
-            onChangeText={setAdress}
+            value={address}
+            onChangeText={setAddress}
           />
 
           <Input
