@@ -2,7 +2,7 @@
 
 Simples aplicativo desenvolvido com o intuito de ajudar uma pessoa da infra-estrutura da empresa num projeto pessoal para automação residêncial.
 
-	Objetivo principal do aplicativo é controlar uma placa arduino UNO + shield ethernet remotamente, com controle de autenticação, e monitoramento de status dos pinos do arduino.
+1. ###### Objetivo principal do aplicativo é controlar uma placa arduino UNO + shield ethernet remotamente, com controle de autenticação, e monitoramento de status dos pinos do arduino.
 
 ### Tecnologias utilizadas
 - HTML5
