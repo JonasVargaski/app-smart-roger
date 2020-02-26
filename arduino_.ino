@@ -1,4 +1,5 @@
 #include <ArduinoJson.h>
+#include <avr/wdt.h>
 #include <Ethernet.h>
 #include <SPI.h>
 
@@ -17,6 +18,7 @@ EthernetServer server(80);
 void setup()
 {
   iniciarDesligado();
+  wdt_enable(WDTO_8S);
   Serial.begin(9600);
   while (!Serial)
     continue;
@@ -32,12 +34,14 @@ void setup()
 
 void loop()
 {
+  wdt_reset();
   EthernetClient client = server.available();
   if (!client)
     return;
 
   while (client.connected())
   {
+    wdt_reset();
     if (client.available())
     {
       char c = client.read();
