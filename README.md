@@ -5,8 +5,6 @@ Simples aplicativo desenvolvido com o intuito de ajudar uma pessoa da infra-estr
 1. ###### Objetivo principal do aplicativo é controlar uma placa arduino UNO + shield ethernet remotamente, com controle de autenticação, e monitoramento de status dos pinos do arduino.
 
 ### Tecnologias utilizadas
-- HTML5
-- CSS3
 - JavaScript
 - Styled Components
 - React Native
