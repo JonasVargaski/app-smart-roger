@@ -3,7 +3,7 @@ import StyledButton from '../../components/Button';
 
 export const Container = styled.ScrollView`
   flex:1;
-  padding:10px 14px;
+  padding: 0 14px;
 `;
 
 export const Text = styled.Text`

@@ -7,6 +7,8 @@ const INITIAL_STATE = {
   address: '',
   password: '',
   relays: [],
+  temp: 0,
+  tempAdj: 0,
 };
 
 function reducer(state, action) {
@@ -18,6 +20,10 @@ function reducer(state, action) {
     case 'SET_SERVER_INFO': {
       const { address, password } = action.payload;
       return { ...state, address, password };
+    }
+    case 'SET_TEMPADJ': {
+      const tempAdj = action.payload;
+      return { ...state, tempAdj };
     }
     case 'ADD_RELAY': {
       return { ...state, relays: [...state.relays, { id: uniqueID(), pin: '', description: '', time: '', active: false }] };
@@ -33,7 +39,7 @@ function reducer(state, action) {
       newRelays.splice(index, 1, relay)
       return { ...state, relays: newRelays };
     }
-    case 'CHANGE_STATUS_RELAYS': {
+    case 'CHANGE_SYNC_DATA': {
       const pins = action.payload;
       return {
         ...state, relays: state.relays.map(r => {
@@ -41,9 +47,12 @@ function reducer(state, action) {
             r.active = pins[`d${r.pin}`] == 1;
           }
           return r;
-        })
+        }),
+        temp: pins.temp || 0,
+        tempAdj: pins.tempAdj || 0
       };
     }
+
     default:
       throw new Error();
   }

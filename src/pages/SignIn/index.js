@@ -36,7 +36,7 @@ export default function SignIn({ navigation }) {
 
       const { data } = await axios.post(address, { password });
       if (data.pins) {
-        dispatch({ type: 'CHANGE_STATUS_RELAYS', payload: data.pins });
+        dispatch({ type: 'CHANGE_SYNC_DATA', payload: data.pins });
         navigation.navigate('Dashboard');
       }
 

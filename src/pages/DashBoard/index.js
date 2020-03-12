@@ -4,6 +4,7 @@ import axios from 'axios';
 import Icon from '@expo/vector-icons/MaterialIcons'
 
 import Background from '../../components/Background';
+import Temp from './Temp';
 import { Container, Action, ActionContainer, Text, Status, Button, SettingsButton } from './styles';
 
 import useAppContext from '../../store';
@@ -18,7 +19,7 @@ export default function Dashboard({ navigation }) {
   });
 
   const {
-    store: { relays, address, password },
+    store: { temp, tempAdj, relays, address, password },
     dispatch,
   } = useAppContext();
 
@@ -32,7 +33,7 @@ export default function Dashboard({ navigation }) {
         throw new Error("No data received from server");
       }
 
-      dispatch({ type: 'CHANGE_STATUS_RELAYS', payload: data.pins });
+      dispatch({ type: 'CHANGE_SYNC_DATA', payload: data.pins });
 
       ToastAndroid.showWithGravityAndOffset(
         'Sinal Enviado!',
@@ -56,9 +57,53 @@ export default function Dashboard({ navigation }) {
     }
   }
 
+  async function sendTempToServer() {
+    Vibration.vibrate(60);
+    try {
+
+      const { data } = await axios.post(address, { password, tempAdj: Number(tempAdj) });
+
+      if (!data.pins) {
+        throw new Error("No data received from server");
+      }
+
+      dispatch({ type: 'CHANGE_SYNC_DATA', payload: data.pins });
+
+      ToastAndroid.showWithGravityAndOffset(
+        'Atualizado com Sucesso!',
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        25,
+        120,
+      );
+
+      setTimeout(() => {
+        Vibration.vibrate([100, 100, 100, 100]);
+      }, 200);
+
+    } catch ({ message }) {
+      Alert.alert(
+        'Erro ao atualizar dados!',
+        message,
+      );
+      Vibration.vibrate(650);
+    }
+  }
+
+  function handleChangeTempAdj(temp) {
+    dispatch({ type: 'SET_TEMPADJ', payload: temp });
+  }
+
   return (
     <Background>
       <Container >
+        <Temp
+          onRefresh={sendTempToServer}
+          onChange={handleChangeTempAdj}
+          temp={temp}
+          tempAdj={tempAdj}
+        />
+
         {relays.map(relay => (
           <Action key={relay.pin}>
             <Text>{relay.description}</Text>
