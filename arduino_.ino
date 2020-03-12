@@ -1,28 +1,42 @@
 #include <ArduinoJson.h>
 #include <avr/wdt.h>
 #include <Ethernet.h>
+#include <EEPROM.h>
 #include <SPI.h>
 
-const String SENHA_ACESSO = "1a2b3c4e";
+const String SENHA_ACESSO = "abcde";
 
-byte mac[] = {0xA4, 0x28, 0x72, 0xCA, 0x55, 0x2F};
-byte ip[] = {192, 168, 0, 110};
-byte gateway[] = {192, 168, 0, 1};
-byte subnet[] = {255, 255, 255, 0};
+unsigned char mac[] = {0xA1, 0x78, 0x52, 0x2A, 0x57, 0x2E};
+unsigned char ip[] = {192, 168, 0, 17};
+unsigned char gateway[] = {192, 168, 0, 1};
+unsigned char subnet[] = {255, 255, 255, 0};
 
 String bufferJSON = "";
 bool armazenaBuffer = false;
+long sensorTemp = 0;
+int tempConfig = 0;
+unsigned long previousMillis = 0;
 
-EthernetServer server(80);
+//#Definições de função
+void restaurarEstados(void);
+void enviarStatusArduino(EthernetClient client);
+void enviarErroAcesso(EthernetClient client);
+void processarSaida(int pin, int acao, int duracao);
+void readSensor(void);
+
+EthernetServer server(3041);
 
 void setup()
 {
-  iniciarDesligado();
+  pinMode(A0, INPUT);
   wdt_enable(WDTO_8S);
+
   Serial.begin(9600);
+
   while (!Serial)
     continue;
 
+  restaurarEstados();
   Ethernet.begin(mac, ip, gateway, subnet);
 
   server.begin();
@@ -35,6 +49,15 @@ void setup()
 void loop()
 {
   wdt_reset();
+
+  unsigned long currentMillis = millis();
+  if (currentMillis - previousMillis > 1000)
+  {
+    previousMillis = currentMillis;
+
+    readSensor();
+  }
+
   EthernetClient client = server.available();
   if (!client)
     return;
@@ -66,11 +89,17 @@ void loop()
         if (SENHA_ACESSO == String(senha))
         {
 
-          long pin = data["pin"];
-          long acao = data["action"];
-          long duracao = data["time"];
+          int pin = data["pin"];
+          int acao = data["action"];
+          int duracao = data["time"];
+          int tempAdj = data["tempAdj"];
 
-          if (pin)
+          if (tempAdj)
+          {
+            tempConfig = tempAdj;
+            EEPROM.write(12, tempConfig);
+          }
+          else if (pin)
           {
             processarSaida(pin, acao, duracao);
           }
@@ -88,16 +117,9 @@ void loop()
 
 void enviarStatusArduino(EthernetClient client)
 {
-  StaticJsonBuffer<500> jsonBuffer;
+  StaticJsonBuffer<300> jsonBuffer;
   JsonObject &root = jsonBuffer.createObject();
   JsonObject &pins = root.createNestedObject("pins");
-  pins["a0"] = analogRead(A0);
-  pins["a1"] = analogRead(A1);
-  pins["a2"] = analogRead(A2);
-  pins["a3"] = analogRead(A3);
-  pins["a4"] = analogRead(A4);
-  pins["a5"] = analogRead(A5);
-
   pins["d0"] = digitalRead(0);
   pins["d1"] = digitalRead(1);
   pins["d2"] = digitalRead(2);
@@ -110,8 +132,10 @@ void enviarStatusArduino(EthernetClient client)
   pins["d9"] = digitalRead(9);
   pins["d10"] = digitalRead(10);
   pins["d11"] = digitalRead(11);
-  pins["d12"] = digitalRead(12);
+  pins["d12"] = digitalRead(11);
   pins["d13"] = digitalRead(13);
+  pins["temp"] = sensorTemp;
+  pins["tempAdj"] = tempConfig;
 
   Serial.print(F("Sending: "));
   root.printTo(Serial);
@@ -147,6 +171,7 @@ void processarSaida(int pin, int acao, int duracao)
   if (duracao <= 1)
   {
     digitalWrite(pin, acao);
+    EEPROM.write(pin, acao);
   }
   else if (duracao > 1 && acao == 1)
   {
@@ -157,11 +182,43 @@ void processarSaida(int pin, int acao, int duracao)
   delay(20);
 }
 
-void iniciarDesligado()
+void restaurarEstados()
 {
-  for (int i = 0; i < 13; i++)
+  tempConfig = EEPROM.read(12);
+
+  for (int i = 0; i <= 12; i++)
   {
     pinMode(i, OUTPUT);
-    digitalWrite(i, LOW);
+    int status = EEPROM.read(i);
+
+    if (i != 255)
+    {
+      digitalWrite(i, status);
+    }
+    else
+    {
+      digitalWrite(i, LOW);
+      EEPROM.write(i, 0);
+    }
+  }
+}
+
+void readSensor()
+{
+  float temp_media = 0;
+
+  for (int i = 0; i < 50; i++)
+  {
+    temp_media += (float(analogRead(A0)) * 5 / (1023)) / 0.01;
+  }
+  sensorTemp = (int)temp_media / 50;
+
+  if (sensorTemp >= tempConfig)
+  {
+    digitalWrite(13, HIGH);
+  }
+  else if ((sensorTemp + 3) <= tempConfig)
+  {
+    digitalWrite(13, LOW);
   }
 }
