@@ -14,7 +14,7 @@ Simples aplicativo desenvolvido com o intuito de ajudar uma pessoa da infra-estr
 - [Node.js](https://nodejs.org "Node.js") >= 8.10 instalado
 - [Expo-cli](https://docs.expo.io/versions/latest/workflow/expo-cli/) instalado
 - [Arduino IDE](https://www.arduino.cc/en/main/software) instalado
-- [ArduinoJson](https://arduinojson.org/) versão 5.0.0 insatlado
+- [ArduinoJson](https://arduinojson.org/) versão 5.0.0 instalado
 
 ### Como executar
 Para executar a aplicação em ambiente local, clone este repositório, abra o diretório do projeto no terminal e execute os seguintes comandos:
