@@ -4,11 +4,13 @@
 #include <EEPROM.h>
 #include <SPI.h>
 
+#define PINO_RELE_TEMP 7
+
 const String SENHA_ACESSO = "abcde";
 
-unsigned char mac[] = {0xA1, 0x78, 0x52, 0x2A, 0x57, 0x2E};
-unsigned char ip[] = {192, 168, 0, 17};
-unsigned char gateway[] = {192, 168, 0, 1};
+unsigned char mac[] = {0xA4, 0x28, 0xC2, 0xCA, 0x54, 0x2E};
+unsigned char ip[] = {192, 168, 15, 70};
+unsigned char gateway[] = {192, 168, 15, 254};
 unsigned char subnet[] = {255, 255, 255, 0};
 
 String bufferJSON = "";
@@ -29,6 +31,7 @@ EthernetServer server(3041);
 void setup()
 {
   pinMode(A0, INPUT);
+  pinMode(PINO_RELE_TEMP, OUTPUT);
   wdt_enable(WDTO_8S);
 
   Serial.begin(9600);
@@ -132,7 +135,7 @@ void enviarStatusArduino(EthernetClient client)
   pins["d9"] = digitalRead(9);
   pins["d10"] = digitalRead(10);
   pins["d11"] = digitalRead(11);
-  pins["d12"] = digitalRead(11);
+  pins["d12"] = digitalRead(12);
   pins["d13"] = digitalRead(13);
   pins["temp"] = sensorTemp;
   pins["tempAdj"] = tempConfig;
@@ -215,10 +218,12 @@ void readSensor()
 
   if (sensorTemp >= tempConfig)
   {
-    digitalWrite(13, HIGH);
+    digitalWrite(PINO_RELE_TEMP, HIGH);
+    Serial.println("ligado");
   }
   else if ((sensorTemp + 3) <= tempConfig)
   {
-    digitalWrite(13, LOW);
+    digitalWrite(PINO_RELE_TEMP, LOW);
+    Serial.println("desligado");
   }
 }
