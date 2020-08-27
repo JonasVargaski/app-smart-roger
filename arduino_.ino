@@ -4,7 +4,7 @@
 #include <EEPROM.h>
 #include <SPI.h>
 
-#define PINO_RELE_TEMP 7
+#define PINO_RELE_TEMP 8
 
 const String SENHA_ACESSO = "abcde";
 
@@ -23,8 +23,9 @@ unsigned long previousMillis = 0;
 void restaurarEstados(void);
 void enviarStatusArduino(EthernetClient client);
 void enviarErroAcesso(EthernetClient client);
-void processarSaida(int pin, int acao, int duracao);
+void processarSaida(int pinPcb, int acao, int duracao);
 void readSensor(void);
+int getPin(int pinPcb);
 
 EthernetServer server(3041);
 
@@ -100,11 +101,11 @@ void loop()
           if (tempAdj)
           {
             tempConfig = tempAdj;
-            EEPROM.write(12, tempConfig);
+            EEPROM.write(20, tempConfig);
           }
           else if (pin)
           {
-            processarSaida(pin, acao, duracao);
+            processarSaida(getPin(pin), acao, duracao);
           }
           enviarStatusArduino(client);
         }
@@ -133,10 +134,11 @@ void enviarStatusArduino(EthernetClient client)
   pins["d7"] = digitalRead(7);
   pins["d8"] = digitalRead(8);
   pins["d9"] = digitalRead(9);
-  pins["d10"] = digitalRead(10);
-  pins["d11"] = digitalRead(11);
-  pins["d12"] = digitalRead(12);
-  pins["d13"] = digitalRead(13);
+  pins["d10"] = digitalRead(A1);
+  pins["d11"] = digitalRead(A2);
+  pins["d12"] = digitalRead(A3);
+  pins["d13"] = digitalRead(A4);
+  pins["d14"] = digitalRead(A5);
   pins["temp"] = sensorTemp;
   pins["tempAdj"] = tempConfig;
 
@@ -170,7 +172,6 @@ void enviarErroAcesso(EthernetClient client)
 
 void processarSaida(int pin, int acao, int duracao)
 {
-  pinMode(pin, OUTPUT);
   if (duracao <= 1)
   {
     digitalWrite(pin, acao);
@@ -187,20 +188,20 @@ void processarSaida(int pin, int acao, int duracao)
 
 void restaurarEstados()
 {
-  tempConfig = EEPROM.read(12);
+  tempConfig = EEPROM.read(20);
 
-  for (int i = 0; i <= 12; i++)
+  for (int i = 0; i <= 14; i++)
   {
-    pinMode(i, OUTPUT);
     int status = EEPROM.read(i);
+    pinMode(getPin(i), OUTPUT);
 
     if (i != 255)
     {
-      digitalWrite(i, status);
+      digitalWrite(getPin(i), status);
     }
     else
     {
-      digitalWrite(i, LOW);
+      digitalWrite(getPin(i), LOW);
       EEPROM.write(i, 0);
     }
   }
@@ -226,4 +227,20 @@ void readSensor()
     digitalWrite(PINO_RELE_TEMP, LOW);
     Serial.println("desligado");
   }
+}
+
+int getPin(int pinPcb){
+    switch(pinPcb){
+    case 10:
+    return A1;
+    case 11:
+    return A2;
+    case 12:
+    return A3;
+    case 13:
+    return A4;
+    case 14:
+    return A5;
+    default:
+    return pinPcb;
 }
