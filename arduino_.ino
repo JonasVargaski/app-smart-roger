@@ -243,4 +243,5 @@ int getPin(int pinPcb){
     return A5;
     default:
     return pinPcb;
+  }
 }
